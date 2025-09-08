@@ -25,27 +25,52 @@ public class AddMinion {
 
         String minionName = minionTokens[1];
         int minionAge = Integer.parseInt(minionTokens[2]);
-        String minionTown = villainTokens[3];
-        int townId = 0;
-        if (townExists(minionTown) == 0) {
+        String minionTown = minionTokens[3];
+        int townId = townExists(minionTown);
+        if (townId == 0) {
             townId = createTown(minionTown);
         }
 
         int minionId = createMinion(minionName, minionAge, townId);
 
-        int villainId = 0;
         String villainName = villainTokens[1];
-        if (villainExist(villainName) == 0) {
+        int villainId = villainExist(villainName);
+        if (villainId == 0) {
          villainId =   createVillain(villainName);
         }
 
+        assignMinionToVillain(villainId, minionId);
+        System.out.printf("Successfully added %s to be minion of %s%n",  minionName,villainName);
+
     }
 
-    private static int createVillain(String villainName) {
-        return 0;
+    private static void assignMinionToVillain(int villainId, int minionId) throws SQLException {
+        PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement("INSERT INTO minions_villains VALUES (?, ?)");
+        preparedStatement.setInt(1, minionId);
+        preparedStatement.setInt(2, villainId);
+        preparedStatement.executeUpdate();
     }
 
-    private static int villainExist(String villainName) {
+    private static int createVillain(String villainName) throws SQLException {
+        PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement("INSERT INTO villains (name, evilness_factor) VALUE (?, 'evil')");
+        preparedStatement.setString(1, villainName);
+        preparedStatement.executeUpdate();
+        preparedStatement = DBConnection.getConnection().prepareStatement("SELECT id FROM villains WHERE name = ?;");
+        preparedStatement.setString(1, villainName);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+
+        System.out.printf("Villain %s was added to the database.%n",  villainName);
+        return resultSet.getInt("id");
+    }
+
+    private static int villainExist(String villainName) throws SQLException {
+        PreparedStatement preparedStatement = DBConnection.getConnection().prepareStatement("SELECT id FROM villains WHERE name = ?");
+        preparedStatement.setString(1, villainName);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (resultSet.next()) {
+            return resultSet.getInt("id");
+        }
         return 0;
     }
 
@@ -59,6 +84,7 @@ public class AddMinion {
         preparedStatement.setString(1, minionName);
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
+
         return resultSet.getInt("id");
     }
 
@@ -70,6 +96,7 @@ public class AddMinion {
         preparedStatement.setString(1, townName);
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
+        System.out.printf("Town %s was added to the database.%n",townName);
         return resultSet.getInt("id");
     }
 
