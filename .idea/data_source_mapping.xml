@@ -2,6 +2,7 @@
 <project version="4">
   <component name="DataSourcePerFileMappings">
     <file url="file://$PROJECT_DIR$/JavaDBAppIntroductionExercises/AddMinion.java" value="f40df273-82ca-44ee-aa65-a6508d0a1e88" />
+    <file url="file://$PROJECT_DIR$/JavaDBAppIntroductionExercises/ChangeTownNamesCasing.java" value="f40df273-82ca-44ee-aa65-a6508d0a1e88" />
     <file url="file://$PROJECT_DIR$/JavaDBAppIntroductionExercises/GetMinionNames.java" value="f40df273-82ca-44ee-aa65-a6508d0a1e88" />
   </component>
 </project>
